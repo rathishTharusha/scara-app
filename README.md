@@ -24,7 +24,7 @@ If you're a beginner, you can download the code without using Git:
 If you're familiar with Git:
 ```bash
 git clone https://github.com/rathishTharusha/scara-app.git
-cd scara-web-app
+cd scara-app
 ```
 
 ---
