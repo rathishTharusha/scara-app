@@ -23,8 +23,8 @@ If you're a beginner, you can download the code without using Git:
 
 If you're familiar with Git:
 ```bash
-git clone https://github.com/rathishTharusha/scara-app.git
-cd scara-app
+git clone https://github.com/your-username/scara-web-app.git
+cd scara-web-app
 ```
 
 ---
@@ -71,33 +71,84 @@ const firebaseConfig = {
 ### ✅ 5. Install Firebase CLI on your PC
 
 Install Node.js if you don’t have it: https://nodejs.org/
-Then in terminal:
+Then in terminal (Command Prompt or Terminal):
 ```bash
 npm install -g firebase-tools
 firebase login
-firebase init
 ```
-During `firebase init`:
-- Select: **Hosting**, **Functions**
-- Use existing project → choose your Firebase project
-- Set `public/` as your hosting folder
-- Set up JavaScript functions when asked
+This logs you into your Google account from the terminal.
 
 ---
 
-### ✅ 6. Deploy Frontend & Cloud Function
+### ✅ 6. Initialize Firebase in the project directory
 
-From your project root:
+In your terminal, go to your project folder:
+```bash
+cd path/to/scara-app
+firebase init
+```
+Select the following features (use spacebar to select):
+- Firestore
+- Functions
+- Hosting
+
+Then follow these prompts:
+
+1. Use existing Firebase project → pick your project name.
+2. Firestore:
+   - Accept default `firestore.rules`
+   - Accept default `firestore.indexes.json`
+3. Functions:
+   - Language: JavaScript
+   - Do NOT overwrite if asked (you already have code there)
+   - Skip ESLint and npm install for now (you’ll run it manually later)
+4. Hosting:
+   - Set `public` as the public directory
+   - Configure as single-page app: Yes
+   - GitHub deploys: You can say No for simplicity, or Yes if familiar with GitHub
+
+💡 If asked to authorize GitHub access and you're using a personal repo, grant permissions.
+
+Now your Firebase project is connected and ready!
+
+---
+
+### ✅ 7. Deploy Frontend & Cloud Functions
+
+From the same project folder:
+
+1. Deploy the frontend (your web app):
 ```bash
 firebase deploy --only hosting
+```
+This uploads everything in /public to your Firebase web address.
+
+📍 You’ll get a URL like:
+```
+Hosting URL: https://your-project-id.web.app
+```
+
+2. Deploy backend (Cloud Function):
+```bash
+cd functions
+npm install  # Only if you haven’t already installed packages
+cd ..
 firebase deploy --only functions
 ```
 
-This uploads your website and backend function to Firebase servers.
+🚨 Note: Cloud Functions require the Blaze plan (pay-as-you-go). You may see an error like:
+```
+Error: Your project must be on the Blaze plan to enable required APIs
+```
+If so:
+- Go to Firebase Console → Project Settings → Upgrade → Switch to Blaze plan (requires credit card)
+- Don’t worry: you will not be charged if usage stays within free limits
+
+If you prefer to skip Cloud Functions (and just use Firestore + Pi polling), let me know — we can adjust it.
 
 ---
 
-### ✅ 7. Setup Raspberry Pi (Flask server)
+### ✅ 8. Setup Raspberry Pi (Flask server)
 
 📍 Run these steps on your Raspberry Pi (not your laptop).
 
@@ -127,7 +178,7 @@ http://<PI_LOCAL_IP>:5000/receive_command
 
 ---
 
-### ✅ 8. Expose Raspberry Pi to Internet (using ngrok)
+### ✅ 9. Expose Raspberry Pi to Internet (using ngrok)
 
 📍 Still on your Raspberry Pi:
 
@@ -155,7 +206,7 @@ Copy that `https://` URL — we will use it in the next step.
 
 ---
 
-### ✅ 9. Update Cloud Function with Pi URL
+### ✅ 10. Update Cloud Function with Pi URL
 
 📍 Back on your PC:
 
@@ -178,7 +229,7 @@ firebase deploy --only functions
 
 ---
 
-### ✅ 10. DONE! Try the app
+### ✅ 11. DONE! Try the app
 
 - Visit your Firebase-hosted URL (shown after deploy)
 - Login with Google
