@@ -99,50 +99,79 @@ This uploads your website and backend function to Firebase servers.
 
 ### ✅ 7. Setup Raspberry Pi (Flask server)
 
-1. Install Flask:
+📍 Run these steps on your Raspberry Pi (not your laptop).
+
+1. Transfer the `raspberry-pi/` folder to your Raspberry Pi (via SCP, USB, or Git clone on Pi).
+
+2. Open a terminal on the Pi and install Flask:
 ```bash
 sudo apt update
-sudo apt install python3-pip
+sudo apt install python3-pip -y
 pip3 install flask flask-cors
 ```
 
-2. Go to `raspberry-pi/` folder
-3. Run the server:
+3. Navigate to the `raspberry-pi/` directory:
+```bash
+cd ~/path-to-project/raspberry-pi
+```
+
+4. Run the server:
 ```bash
 python3 receive.py
 ```
-This will start your Flask server at `http://<PI_IP>:5000/receive_command`
+
+Your Flask server is now listening locally on:
+```
+http://<PI_LOCAL_IP>:5000/receive_command
+```
 
 ---
 
 ### ✅ 8. Expose Raspberry Pi to Internet (using ngrok)
 
-Your Pi needs to be reachable from Firebase Cloud Functions.
-Install ngrok:
+📍 Still on your Raspberry Pi:
+
+We use ngrok so Firebase can reach the Pi from anywhere online.
+
+1. Install ngrok:
 ```bash
 curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | \
   sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && \
   echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | \
   sudo tee /etc/apt/sources.list.d/ngrok.list && \
-  sudo apt update && sudo apt install ngrok
+  sudo apt update && sudo apt install ngrok -y
 ```
 
-Start ngrok tunnel:
+2. Start the tunnel:
 ```bash
 ngrok http 5000
 ```
-Copy the HTTPS URL it shows (e.g., `https://abc123.ngrok.io`)
+
+3. It will display a forwarding URL like:
+```
+Forwarding    https://abc123.ngrok.io -> http://localhost:5000
+```
+Copy that `https://` URL — we will use it in the next step.
 
 ---
 
 ### ✅ 9. Update Cloud Function with Pi URL
 
-In `functions/index.js`, update this line:
+📍 Back on your PC:
+
+1. Open `functions/index.js`
+2. Find this line:
 ```js
 await axios.post("http://YOUR_PI_PUBLIC_URL:5000/receive_command", payload);
 ```
-Replace `YOUR_PI_PUBLIC_URL` with your ngrok URL.
-Then redeploy:
+3. Replace `YOUR_PI_PUBLIC_URL` with the `https://` URL from ngrok (no port needed).
+
+Example:
+```js
+await axios.post("https://abc123.ngrok.io/receive_command", payload);
+```
+
+4. Save the file and redeploy functions:
 ```bash
 firebase deploy --only functions
 ```
@@ -154,15 +183,15 @@ firebase deploy --only functions
 - Visit your Firebase-hosted URL (shown after deploy)
 - Login with Google
 - Select a shape and color → click Submit
-- Pi receives it and prints it in terminal
+- Your Raspberry Pi terminal will show the received selection 🎉
 
 ---
 
 ## 🧪 Troubleshooting
 
 - 🔥 If Cloud Functions fail: check Firebase Logs (Console → Functions → Logs)
-- 🌐 If Pi not reachable: recheck ngrok or firewall settings
-- 🔑 Want authentication to Pi endpoint? Use a secret token
+- 🌐 If Pi not reachable: restart ngrok and update the URL in `functions/index.js`
+- 🔐 Want more security? Add a shared secret to the POST request
 
 ---
 
