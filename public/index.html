@@ -1,28 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
+  <title>SCARA Bot Controller</title>
   <script type="module" src="app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.154.0/build/three.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    #form {
+      margin-top: 20px;
+    }
+    select, button {
+      margin: 5px;
+      padding: 5px;
+    }
+    #preview {
+      display: block;
+      margin-top: 20px;
+      width: 300px;
+      height: 300px;
+      background: #f0f0f0;
+    }
+  </style>
 </head>
 <body>
   <h2>SCARA Bot Controller</h2>
   <button id="login-btn">Login with Google</button>
+
   <div id="form" style="display:none;">
+    <label for="shape">Shape:</label>
     <select id="shape">
-      <option value="circle">Circle</option>
-      <option value="square">Square</option>
-      <option value="hexagon">Hexagon</option>
+      <option value="cube">Cube</option>
+      <option value="sphere">Sphere</option>
+      <option value="cylinder">Cylinder</option>
     </select>
+
+    <label for="color">Color:</label>
     <select id="color">
       <option value="red">Red</option>
       <option value="green">Green</option>
       <option value="blue">Blue</option>
     </select>
+
     <button id="submit">Send to Pi</button>
-    <canvas id="preview"></canvas>
+    <canvas id="preview" width="300" height="300"></canvas>
   </div>
 </body>
 </html>
